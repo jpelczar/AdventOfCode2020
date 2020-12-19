@@ -8,57 +8,58 @@ fun main() {
         it.lines().filter { f -> f.isNotEmpty() }
     }
 
-    partOne(lines)
-    partTwo(lines)
+    Day2.partOne(lines)
+    Day2.partTwo(lines)
 }
 
-fun partOne(lines: List<String>) {
-    println("Day 2 - Part 1")
-    lines
-        .map { parseLine(it) }
-        .filter { isValidByRange(it) }
-        .size
-        .apply { println("Result: $this") }
-}
-
-fun partTwo(lines: List<String>) {
-    println("Day 2 - Part 2")
-    lines
-        .map { parseLine(it) }
-        .filter { isValidByPosition(it) }
-        .size
-        .apply { println("Result: $this") }
-}
-
-fun parseLine(line: String): PassInput {
-    val split = line.split(Regex("\\s"))
-    val rangeRaw = split[0].split("-").map { it.toInt() }
-
-    return PassInput(
-        PassPolicy(rangeRaw[0], rangeRaw[1], split[1].toCharArray()[0]),
-        split[2]
-    )
-}
-
-fun isValidByRange(passInput: PassInput): Boolean {
-    val times = passInput.password.filter { it == passInput.policy.letter }.length
-    return IntRange(passInput.policy.first, passInput.policy.second).contains(times)
-}
-
-fun isValidByPosition(passInput: PassInput): Boolean {
-    val indexFirst = max(passInput.policy.first - 1, 0)
-    val indexSecond = max(passInput.policy.second - 1, 0)
-    if (passInput.password.length <= indexFirst || passInput.password.length <= indexSecond) {
-        return false
+object Day2 {
+    fun partOne(lines: List<String>) {
+        println("Day 2 - Part 1")
+        lines
+            .map { parseLine(it) }
+            .filter { isValidByRange(it) }
+            .size
+            .apply { println("Result: $this") }
     }
-    val lettersByPosition = setOf(passInput.password[indexFirst], passInput.password[indexSecond])
 
-    return lettersByPosition.size == 2 && lettersByPosition.contains(passInput.policy.letter)
+    fun partTwo(lines: List<String>) {
+        println("Day 2 - Part 2")
+        lines
+            .map { parseLine(it) }
+            .filter { isValidByPosition(it) }
+            .size
+            .apply { println("Result: $this") }
+    }
+
+    private fun parseLine(line: String): PassInput {
+        val split = line.split(Regex("\\s"))
+        val rangeRaw = split[0].split("-").map { it.toInt() }
+
+        return PassInput(
+            PassPolicy(rangeRaw[0], rangeRaw[1], split[1].toCharArray()[0]),
+            split[2]
+        )
+    }
+
+    private fun isValidByRange(passInput: PassInput): Boolean {
+        val times = passInput.password.filter { it == passInput.policy.letter }.length
+        return IntRange(passInput.policy.first, passInput.policy.second).contains(times)
+    }
+
+    private fun isValidByPosition(passInput: PassInput): Boolean {
+        val indexFirst = max(passInput.policy.first - 1, 0)
+        val indexSecond = max(passInput.policy.second - 1, 0)
+        if (passInput.password.length <= indexFirst || passInput.password.length <= indexSecond) {
+            return false
+        }
+        val lettersByPosition = setOf(passInput.password[indexFirst], passInput.password[indexSecond])
+
+        return lettersByPosition.size == 2 && lettersByPosition.contains(passInput.policy.letter)
+    }
+
+    data class PassPolicy(val first: Int, val second: Int, val letter: Char)
+    data class PassInput(val policy: PassPolicy, val password: String)
 }
-
-data class PassPolicy(val first: Int, val second: Int, val letter: Char)
-data class PassInput(val policy: PassPolicy, val password: String)
-
 
 /*--- Day 2: Password Philosophy ---
 Your flight departs in a few days from the coastal airport; the easiest way down to the coast from here is via toboggan.

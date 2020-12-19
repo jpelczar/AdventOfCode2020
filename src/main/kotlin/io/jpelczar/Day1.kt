@@ -10,49 +10,51 @@ fun main() {
         it.lines().filter { f -> f.isNotEmpty() }.map { line -> line.toInt() }
     }
 
-    partOne(lines)
-    partTwo(lines)
+    Day1.partOne(lines)
+    Day1.partTwo(lines)
 }
 
-fun partOne(lines: List<Int>) {
-    println("Day 1 - Part 1")
-    run loop@{
-        lines.forEach { outValue ->
-            lines.forEach { inValue ->
-                if (outValue + inValue == SUM_VALUE) {
-                    println("$outValue + $inValue = 2020")
-                    println("$outValue * $inValue = ${inValue * outValue}")
-                    return@loop
-                }
-            }
-        }
-    }
-}
-
-fun partTwo(lines: List<Int>) {
-    println("Day 1 - Part 2")
-    val result = mutableSetOf<Int>()
-    run loop@{
-        lines.forEach {
-            findNumbers(it, lines).forEach { n ->
-                if (n.sum() == SUM_VALUE) {
-                    result.addAll(n)
-                    return@loop
+object Day1 {
+    fun partOne(lines: List<Int>) {
+        println("Day 1 - Part 1")
+        run loop@{
+            lines.forEach { outValue ->
+                lines.forEach { inValue ->
+                    if (outValue + inValue == SUM_VALUE) {
+                        println("$outValue + $inValue = 2020")
+                        println("$outValue * $inValue = ${inValue * outValue}")
+                        return@loop
+                    }
                 }
             }
         }
     }
 
-    println("Sum of $result = ${result.sum()}")
-    println("Multiplication of $result = ${result.reduce { acc, i -> acc * i }}")
-}
+    fun partTwo(lines: List<Int>) {
+        println("Day 1 - Part 2")
+        val result = mutableSetOf<Int>()
+        run loop@{
+            lines.forEach {
+                findNumbers(it, lines).forEach { n ->
+                    if (n.sum() == SUM_VALUE) {
+                        result.addAll(n)
+                        return@loop
+                    }
+                }
+            }
+        }
 
-fun findNumbers(value: Int, numbers: List<Int>, nestedLevel: Int = 0): List<List<Int>> {
-    if (nestedLevel >= MAX_NESTED) {
-        return listOf(listOf(value))
+        println("Sum of $result = ${result.sum()}")
+        println("Multiplication of $result = ${result.reduce { acc, i -> acc * i }}")
     }
-    return numbers.flatMap {
-        findNumbers(it, numbers, nestedLevel + 1).map { v -> v.plus(value) }
+
+    private fun findNumbers(value: Int, numbers: List<Int>, nestedLevel: Int = 0): List<List<Int>> {
+        if (nestedLevel >= MAX_NESTED) {
+            return listOf(listOf(value))
+        }
+        return numbers.flatMap {
+            findNumbers(it, numbers, nestedLevel + 1).map { v -> v.plus(value) }
+        }
     }
 }
 
